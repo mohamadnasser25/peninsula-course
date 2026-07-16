@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Peninsula Neighborhood Crash Course</title>
+<style>
+:root{
+  --bg:#f7f6f2;
+  --surface:#ffffff;
+  --surface-2:#f1efe8;
+  --text:#2c2c2a;
+  --text-2:#5f5e5a;
+  --text-3:#888780;
+  --border:rgba(0,0,0,0.12);
+  --border-2:rgba(0,0,0,0.22);
+  --teal:#0f6e56;
+  --teal-bg:#e1f5ee;
+  --amber:#854f0b;
+  --amber-bg:#faeeda;
+  --info:#185fa5;
+  --info-bg:#e6f1fb;
+  --success:#3b6d11;
+  --success-bg:#eaf3de;
+  --danger:#a32d2d;
+  --danger-bg:#fcebeb;
+  --radius-md:8px;
+  --radius-lg:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:760px;margin:0 auto;padding:24px 18px 60px}
+.app-head{margin-bottom:18px}
+.app-title{font-size:22px;font-weight:600;color:var(--text);margin-bottom:2px}
+.app-sub{font-size:13px;color:var(--text-2)}
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--border);margin-bottom:24px;overflow-x:auto}
+.tab{padding:9px 15px;font-size:13px;cursor:pointer;border-radius:var(--radius-md) var(--radius-md) 0 0;color:var(--text-2);border:none;background:none;white-space:nowrap;flex-shrink:0;font-family:inherit}
+.tab.active{color:var(--text);font-weight:600;border-bottom:2px solid var(--teal)}
+.tab:hover:not(.active){color:var(--text);background:var(--surface-2)}
+.section{display:none}.section.active{display:block}
+.city-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px}
+.city-tab{padding:6px 13px;font-size:12px;border-radius:20px;cursor:pointer;border:1px solid var(--border-2);background:var(--surface);color:var(--text-2);font-family:inherit}
+.city-tab.active{background:var(--teal);color:#fff;border-color:var(--teal)}
+.city-panel{display:none}.city-panel.active{display:block}
+.city-header{margin-bottom:16px}
+.city-name{font-size:19px;font-weight:600;color:var(--text);margin-bottom:3px}
+.city-tagline{font-size:13px;color:var(--text-2);margin-bottom:10px}
+.city-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.meta-pill{font-size:11px;padding:4px 11px;border-radius:20px;font-weight:600}
+.price-pill{background:var(--success-bg);color:var(--success)}
+.vibe-pill{background:var(--info-bg);color:var(--info)}
+.buyer-pill{background:var(--amber-bg);color:var(--amber)}
+.hoods-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-bottom:16px}
+.hood-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px}
+.hood-name{font-size:14px;font-weight:600;color:var(--text);margin-bottom:2px}
+.hood-price{font-size:11px;color:var(--teal);font-weight:600;margin-bottom:8px}
+.hood-desc{font-size:12.5px;color:var(--text-2);line-height:1.55;margin-bottom:8px}
+.tier-dots{display:flex;gap:4px;margin-bottom:4px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--border-2)}
+.dot.filled{background:var(--teal)}
+.insider{font-size:12.5px;padding:9px 11px;border-radius:var(--radius-md);background:var(--surface-2);border-left:3px solid var(--amber);margin-top:6px;color:var(--text-2);line-height:1.55;font-style:italic}
+.section-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-3);margin-bottom:8px}
+.always-know{font-size:13px;color:var(--text-2);line-height:1.65;padding:12px 14px;border-radius:var(--radius-md);background:var(--teal-bg)}
+.always-know strong{color:var(--teal)}
+.quiz-q{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;margin-bottom:14px}
+.quiz-text{font-size:14px;color:var(--text);margin-bottom:14px;line-height:1.5}
+.qnum{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-3);display:block;margin-bottom:5px}
+.quiz-opts{display:flex;flex-direction:column;gap:7px}
+.quiz-opt{font-size:13px;padding:9px 13px;border-radius:var(--radius-md);border:1px solid var(--border-2);background:var(--surface);color:var(--text);cursor:pointer;text-align:left;font-family:inherit}
+.quiz-opt:hover:not(.disabled){background:var(--surface-2)}
+.quiz-opt.correct{background:var(--success-bg);border-color:var(--success);color:var(--success)}
+.quiz-opt.wrong{background:var(--danger-bg);border-color:var(--danger);color:var(--danger)}
+.quiz-opt.disabled{cursor:default;pointer-events:none}
+.quiz-exp{font-size:12.5px;margin-top:11px;padding:10px 12px;border-radius:var(--radius-md);background:var(--surface-2);color:var(--text-2);line-height:1.55;display:none}
+.score-bar{display:flex;align-items:center;gap:12px;padding:11px 15px;border-radius:var(--radius-md);background:var(--surface-2);margin-bottom:16px;font-size:13px;color:var(--text-2)}
+.score-num{font-size:16px;font-weight:600;color:var(--text)}
+.restart-btn{font-size:12px;padding:5px 11px;border-radius:var(--radius-md);border:1px solid var(--border-2);background:none;color:var(--text-2);cursor:pointer;margin-left:auto;font-family:inherit}
+.restart-btn:hover{background:var(--surface)}
+.overview-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px}
+.ov-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px;cursor:pointer}
+.ov-card:hover{border-color:var(--teal);background:var(--surface-2)}
+.ov-city{font-size:14px;font-weight:600;color:var(--text);margin-bottom:2px}
+.ov-range{font-size:11px;color:var(--teal);font-weight:600;margin-bottom:8px}
+.ov-tags{display:flex;flex-direction:column;gap:3px}
+.ov-tag{font-size:11px;color:var(--text-3)}
+.note{font-size:12px;color:var(--text-3);padding:9px 11px;border-radius:var(--radius-md);background:var(--surface-2)}
+.foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--border);font-size:11px;color:var(--text-3)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="app-head">
+  <div class="app-title">Peninsula Neighborhood Crash Course</div>
+  <div class="app-sub">Menlo Park, Palo Alto, Atherton, Redwood City, San Carlos, Belmont, Los Altos</div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="showTab('overview')">City overview</button>
+  <button class="tab" onclick="showTab('neighborhoods')">Neighborhoods</button>
+  <button class="tab" onclick="showTab('quiz')">Street cred quiz</button>
+</div>
+
+<div id="overview" class="section active">
+  <p style="font-size:13px;color:var(--text-2);margin-bottom:16px">Tap a city to jump to its neighborhoods.</p>
+  <div class="overview-grid">
+    <div class="ov-card" onclick="jumpTo('menlopark')">
+      <div class="ov-city">Menlo Park</div><div class="ov-range">$2.5M – $10M+</div>
+      <div class="ov-tags"><span class="ov-tag">Tech exec central</span><span class="ov-tag">Las Lomitas premium</span><span class="ov-tag">Sand Hill Rd money</span></div>
+    </div>
+    <div class="ov-card" onclick="jumpTo('paloalto')">
+      <div class="ov-city">Palo Alto</div><div class="ov-range">$2.8M – $12M+</div>
+      <div class="ov-tags"><span class="ov-tag">PAUSD school premium</span><span class="ov-tag">Stanford adjacency</span><span class="ov-tag">Highest price/sqft</span></div>
+    </div>
+    <div class="ov-card" onclick="jumpTo('atherton')">
+      <div class="ov-city">Atherton</div><div class="ov-range">$5M – $30M+</div>
+      <div class="ov-tags"><span class="ov-tag">No 1 zip by income</span><span class="ov-tag">Estate lots, privacy</span><span class="ov-tag">Billionaire row</span></div>
+    </div>
+    <div class="ov-card" onclick="jumpTo('redwoodcity')">
+      <div class="ov-city">Redwood City</div><div class="ov-range">$1.4M – $4M</div>
+      <div class="ov-tags"><span class="ov-tag">Most diverse entry pts</span><span class="ov-tag">Downtown energy</span><span class="ov-tag">Edgewater upside</span></div>
+    </div>
+    <div class="ov-card" onclick="jumpTo('sancarlos')">
+      <div class="ov-city">San Carlos</div><div class="ov-range">$1.5M – $3.5M</div>
+      <div class="ov-tags"><span class="ov-tag">City of Good Living</span><span class="ov-tag">Laurel St walkability</span><span class="ov-tag">Family feel</span></div>
+    </div>
+    <div class="ov-card" onclick="jumpTo('belmont')">
+      <div class="ov-city">Belmont</div><div class="ov-range">$1.3M – $2.8M</div>
+      <div class="ov-tags"><span class="ov-tag">Hillside views</span><span class="ov-tag">Carlmont HS town</span><span class="ov-tag">Quiet, underrated</span></div>
+    </div>
+    <div class="ov-card" onclick="jumpTo('losaltos')">
+      <div class="ov-city">Los Altos</div><div class="ov-range">$2.5M – $15M+</div>
+      <div class="ov-tags"><span class="ov-tag">Village walkability</span><span class="ov-tag">Two school districts</span><span class="ov-tag">LAH estate country</span></div>
+    </div>
+  </div>
+  <div class="note">Price ranges are approximate and reflect the broad market for each city. Individual neighborhoods vary significantly: that detail lives in the Neighborhoods tab.</div>
+</div>
+
+<div id="neighborhoods" class="section">
+  <div class="city-tabs">
+    <button class="city-tab active" onclick="showCity('menlopark')">Menlo Park</button>
+    <button class="city-tab" onclick="showCity('paloalto')">Palo Alto</button>
+    <button class="city-tab" onclick="showCity('atherton')">Atherton</button>
+    <button class="city-tab" onclick="showCity('redwoodcity')">Redwood City</button>
+    <button class="city-tab" onclick="showCity('sancarlos')">San Carlos</button>
+    <button class="city-tab" onclick="showCity('belmont')">Belmont</button>
+    <button class="city-tab" onclick="showCity('losaltos')">Los Altos</button>
+  </div>
+
+  <div id="city-menlopark" class="city-panel active">
+    <div class="city-header">
+      <div class="city-name">Menlo Park</div>
+      <div class="city-tagline">The epicenter of venture capital and tech money on the Peninsula</div>
+      <div class="city-meta">
+        <span class="meta-pill price-pill">$2.5M – $10M+</span>
+        <span class="meta-pill vibe-pill">Established, leafy, prestigious</span>
+        <span class="meta-pill buyer-pill">VC partners, tech execs, old money</span>
+      </div>
+    </div>
+    <div class="section-label">Key neighborhoods</div>
+    <div class="hoods-grid">
+      <div class="hood-card">
+        <div class="hood-name">Allied Arts / Downtown</div><div class="hood-price">$3M – $7M</div>
+        <div class="hood-desc">Quiet, tree-lined, classic Menlo Park. Large lots, craftsman and ranch homes. Highly walkable to downtown. This is the neighborhood people picture when they say "Menlo Park."</div>
+        <div class="tier-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div></div>
+        <div class="insider">Sand Hill Road, the address of more VC firms than anywhere on earth, is a 5-minute drive. The MLS pairs Allied Arts with Downtown, and you'll sometimes hear it called Stanford Park, after the Allied Arts Guild that names the area.</div>
+      </div>
+      <div class="hood-card">
+        <div class="hood-name">West Menlo Park</div><div class="hood-price">$3.5M – $8M+</div>
+        <div class="hood-desc">The premium pocket west of El Camino. Borders Atherton and Las Lomitas school district. Bigger lots, more privacy, more old-money feel than central Menlo.</div>
+        <div class="tier-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div></div>
+        <div class="insider">West Menlo is often described as "Atherton adjacent." Buyers who can't afford Atherton but want that feel end up here. Las Lomitas school district is a massive price driver.</div>
+      </div>
+      <div class="hood-card">
+        <div class="hood-name">University Heights</div><div class="hood-price">$1.2M – $5M+</div>
+        <div class="hood-desc">A pocket within West Menlo, straddling Alameda de las Pulgas. Unincorporated San Mateo County, so it has a distinct country feel: no sidewalks, smaller lots, older ranches giving way to new two-story builds. Same top schools as West Menlo.</div>
+        <div class="tier-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div></div>
+        <div class="insider">Because it's unincorporated county, not the City of Menlo Park, building and remodeling rules are generally less restrictive: a real draw for buyers who want to build. Las Lomitas / La Entrada schools drive the premium.</div>
+      </div>
+      <div class="hood-card">
+        <div class="hood-name">Sharon Heights / Stanford Hills</div><div class="hood-price">$2.5M – $5M</div>
+        <div class="hood-desc">More suburban and spread out. Home to the Sharon Heights Golf Club. A quieter, more residential feel: less walkable but spacious. Popular with buyers who want room and quiet over urban proximity.</div>
+        <div class="tier-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div><div class="dot"></div></div>
+        <div class="insider">Sharon Heights Golf Club is a private club, membership by invitation. The MLS pairs this area with Stanford Hills, the adjacent hillside pocket: both feed Las Lomitas schools, the western exception to the east-west pattern.</div>
+      </div>
+      <div class="hood-card">
+        <div class="hood-name">The Willows</div><div class="hood-price">$2.5M – $4.5M</div>
+        <div class="hood-desc">South of downtown, denser, more modest lot sizes. More accessible entry point into Menlo Park. Popular with younger buyers and families. Feels more relaxed than West Menlo.</div>
+        <div class="tier-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div><div class="dot"></div></div>
+        <div class="insider">The Willows is in the Menlo Park City School District (MPCSD), not Las Lomitas. That distinction matters and will come up from informed buyers. The MLS labels this area "Willows / O'Conner," after the O'Connor pocket within it.</div>
+      </div>
+      <div class="hood-card">
+        <div class="hood-name">Vintage Oaks</div><div class="hood-price">$2.5M – $4.5M</div>
+        <div class="hood-desc">A small, established neighborhood dating to the 1940s on the east side, near downtown and the Willows. Smaller, walkable, more modest homes than West Menlo. A more accessible way into Menlo Park with a tight community feel.</div>
+        <div class="tier-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div><div class="dot"></div></div>
+        <div class="insider">Vintage Oaks is in MPCSD (Laurel/Encinal Elementary, Hillview Middle), not Las Lomitas: same east-of-El-Camino pattern as the Willows. Residents are known for a beloved neighborhood dog park.</div>
+      </div>
+      <div class="hood-card">
+        <div class="hood-name">Stanford Weekend Acres</div><div class="hood-price">$2M – $5M+</div>
+        <div class="hood-desc">A tiny, semi-rural pocket of just seven looping streets tucked between Alpine Road, the Stanford Golf Course, and San Francisquito Creek, right against the Stanford Dish trails. Easy to miss. A mix of older humble homes and newer expanded builds.</div>
+        <div class="tier-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div>
+        <div class="insider">On the MLS it usually shows under the alias "Alpine Road," not Stanford Weekend Acres, so listings here are easy to overlook: knowing that alias is a real local edge. Unincorporated county (looser building rules), feeding top Las Lomitas / La Entrada schools.</div>
+      </div>
+      <div class="hood-card">
+        <div class="hood-name">Linfield Oaks</div><div class="hood-price">$1.8M – $3.5M</div>
+        <div class="hood-desc">A central, planned 1950s community of wide, winding streets wrapped around family-friendly Burgess Park. Midcentury ranch homes plus some two-story and modern rebuilds, with townhomes and low-rise apartments on the edges. Quiet, but minutes from both downtown Menlo Park and downtown Palo Alto.</div>
+        <div class="tier-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div><div class="dot"></div></div>
+        <div class="insider">On the MLS it often shows as "Middlefield to El Camino." Burgess Park (pools, courts, fields, skatepark, the library) is the neighborhood's anchor, and pedestrian bridges over San Francisquito Creek put you in downtown Palo Alto on foot. MPCSD schools (Encinal/Hillview).</div>
+      </div>
+      <div class="hood-card">
+        <div class="hood-name">Central Menlo</div><div class="hood-price">$4M – $8M+</div>
+        <div class="hood-desc">The prestige core west of El Camino, between Downtown/Allied Arts and the Alameda. Large lots, classic ranch homes, heavy new construction and remodels. Alongside Allied Arts, this is where Menlo Park demand runs hottest: quiet grandeur, walkable-ish to downtown, and deep buyer competition.</div>
+        <div class="tier-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div></div>
+        <div class="insider">When agents say "west Menlo demand," Central Menlo and Allied Arts are usually what they mean. It's in MPCSD (Oak Knoll/Hillview) despite being west of El Camino, one of the exceptions to the simple east-west district rule, so verify parcel by parcel near the Alameda.</div>
+      </div>
+      <div class="hood-card">
+        <div class="hood-name">Felton Gables</div><div class="hood-price">$3M – $5M</div>
+        <div class="hood-desc">A tiny five-street pocket (Felton Dr, Encinal, Lennox, Arden, Tudor) between Encinal Ave and the Atherton border, built as custom homes in the 1930s–40s on the former estate of Senator Charles Felton. Larger lots around 10,000 sqft, narrow streets with oaks growing in the middle of some roads. A hidden gem unknown even to many Menlo Park residents.</div>
+        <div class="tier-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div>
+        <div class="insider">Residents get private-gate access to Atherton's 26-acre Holbrook-Palmer Park for a small fee, an amenity most agents don't know. The honest caveat to share: Encinal Elementary drop-off/pick-up traffic can gridlock the only ways in and out.</div>
+      </div>
+      <div class="hood-card">
+        <div class="hood-name">Menlo Oaks</div><div class="hood-price">$2.5M – $5M</div>
+        <div class="hood-desc">A rustic east-side pocket named for its namesake oaks: old, narrow streets without sidewalks, larger lots, and a country feel minutes from the Willows and downtown Palo Alto. More eclectic housing stock than the manicured west side.</div>
+        <div class="tier-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div>
+        <div class="insider">Menlo Oaks is unincorporated San Mateo County despite the Menlo Park address: the same looser-building-rules pattern as University Heights and Stanford Weekend Acres, but on the east side. That's now three unincorporated pockets in one city: knowing all three is a genuine expert signal.</div>
+      </div>
+      <div class="hood-card">
+        <div class="hood-name">Flood Park Area (Suburban Park / Lorelei Manor / Flood Triangle)</div><div class="hood-price">$2M – $3.5M</div>
+        <div class="hood-desc">Three friendly, active little neighborhoods between Middlefield and 101, clustered around county-run Flood Park. Post-war homes on modest lots, strong community feel, and among the most popular entry points into the Menlo Park market.</div>
+        <div class="tier-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div><div class="dot"></div></div>
+        <div class="insider">These neighborhoods famously fought to transfer from Ravenswood into MPCSD in the late 2000s and won: a piece of local history longtime owners bring up. School assignment here has real dollar consequences, so always verify current district by address.</div>
+      </div>
+      <div class="hood-card">
+        <div class="hood-name">Belle Haven (East of 101)</div><div class="hood-price">$1M – $1.7M</div>
+        <div class="hood-desc">The only residential neighborhood east of 101, and the most affordable way into Menlo Park by a wide margin. Smaller lots, older homes mixed with new construction, and directly adjacent to Meta headquarters and the Dumbarton corridor. Meta's Willow Village master plan is reshaping the area's retail and infrastructure.</div>
+        <div class="tier-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+        <div class="insider">The key school nuance: Belle Haven is served by Ravenswood City SD for K-8, a major pricing factor, but still feeds Menlo-Atherton High like the rest of the city. Buyers weighing it are usually trading school ratings for price, appreciation upside, and proximity to east-side employers. Know the Willow Village timeline: it's the neighborhood's biggest story.</div>
+      </div>
+      <div class="hood-card">
+        <div class="hood-name">County Area / Fair Oaks Ave (North Fair Oaks)</div><div class="hood-price">$1.2M – $2M</div>
+        <div class="hood-desc">An unincorporated San Mateo County area along the Redwood City border, parts of which carry Menlo Park addresses. More modest homes at some of the lowest price points in the Menlo Park MLS areas. A working-class history with active redevelopment and infill.</div>
+        <div class="tier-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+        <div class="insider">Despite Menlo Park addresses on some streets, this is North Fair Oaks: unincorporated county, generally Redwood City schools, not MPCSD. That address-versus-district mismatch trips up buyers constantly, and catching it before they do is exactly the kind of thing that earns trust.</div>
+      </div>
+    </div>
+    <div class="section-label">One thing to always know</div>
+    <div class="always-know">Menlo Park spans <strong>three</strong> school districts, not two: <strong>Las Lomitas ESD</strong> (West Menlo, University Heights, Stanford Weekend Acres, Sharon Heights/Stanford Hills), <strong>MPCSD</strong> (the central core: Central Menlo, Allied Arts, Downtown, Felton Gables, Linfield Oaks, the Willows, Vintage Oaks, Flood Park area), and <strong>Ravenswood City SD</strong> (Belle Haven, east of 101). Everyone funnels to Menlo-Atherton High. On top of that, three pockets are unincorporated county (University Heights, Stanford Weekend Acres, Menlo Oaks), and North Fair Oaks has Menlo Park addresses with Redwood City schools. District can swing value by $500K+ on the same house: verify by address, every time.</div>
+  </div>
+
+  <div id="city-paloalto" class="city-panel">
+    <div class="city-header">
+      <div class="city-name">Palo Alto</div>
+      <div class="city-tagline">Stanford's backyard and the highest price-per-sqft on the Peninsula</div>
+      <div class="city-meta">
+        <span class="meta-pill price-pill">$2.8M – $12M+</span>
+        <span class="meta-pill vibe-pill">Academic, walkable, intense</span>
+        <span class="meta-pill buyer-pill">Professors, founders, engineers, Stanford affiliates</span>
+      </div>
+    </div>
+    <div class="section-label">Key neighborhoods</div>
+    <div class="hoods-grid">
+      <div class="hood-card">
+        <div class="hood-name">Old Palo Alto</div><div class="hood-price">$5M – $12M+</div>
+        <div class="hood-desc">The most prestigious address in the city. Older, estate-scale homes on large lots. Quiet, private, and walkable to University Ave. The benchmark for Palo Alto pricing.</div>
+        <div class="tier-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div></div>
+        <div class="insider">When someone says "I want Palo Alto" and has $8M+ to spend, this is almost always what they mean. University Ave restaurants are walkable: that matters to this buyer.</div>
+      </div>
+      <div class="hood-card">
+        <div class="hood-name">Midtown</div><div class="hood-price">$3M – $5.5M</div>
+        <div class="hood-desc">Central, family-friendly, more approachable than Old PA. Good schools, decent lot sizes, strong resale. The "reliable" neighborhood: not flashy but consistently in demand.</div>
+        <div class="tier-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div>
+        <div class="insider">Midtown is popular with Stanford faculty and long-tenured tech employees who want a stable, family-friendly base over status. Strong repeat-buyer profile.</div>
+      </div>
+      <div class="hood-card">
+        <div class="hood-name">Professorville</div><div class="hood-price">$4M – $9M</div>
+        <div class="hood-desc">Historic district near downtown. Victorian and craftsman architecture. Named for Stanford professors who built here in the early 1900s. Walkable, charming, architecturally distinct.</div>
+        <div class="tier-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div></div>
+        <div class="insider">Professorville is a historic district, so renovations require design review. Some buyers love the character; others hate the restrictions. Always mention this upfront.</div>
+      </div>
+      <div class="hood-card">
+        <div class="hood-name">South Palo Alto / Barron Park</div><div class="hood-price">$2.8M – $4.5M</div>
+        <div class="hood-desc">More affordable entry into PAUSD. Quieter, more suburban feel. Barron Park is known for a relaxed, community-oriented vibe. Good for buyers priced out of Old PA or Midtown.</div>
+        <div class="tier-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div><div class="dot"></div></div>
+        <div class="insider">Barron Park has a herd of donkeys that live at a local stable. Locals love them and they're a real community touchstone. Knowing that detail signals you know the area.</div>
+      </div>
+      <div class="hood-card">
+        <div class="hood-name">Green Acres</div><div class="hood-price">$3M – $4.5M</div>
+        <div class="hood-desc">A smaller, easily overlooked neighborhood on Palo Alto's southwestern edge, just south of Barron Park and bordering Los Altos. Built on old apricot orchards: mostly 1950s–60s ranch and bungalow homes with some new construction, and a quiet small-town feel. Juana Briones Park is the neighborhood's backyard, with Arastradero Preserve trails minutes away.</div>
+        <div class="tier-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div>
+        <div class="insider">The draw is pedestrian access to a full top-ranked PAUSD school ladder: Juana Briones Elementary, Ellen Fletcher Middle, and Gunn High, all walkable. Don't confuse it with Green Gables, which is in north Palo Alto: a classic mix-up that instantly separates locals from outsiders.</div>
+      </div>
+      <div class="hood-card">
+        <div class="hood-name">Green Gables (Duveneck/St. Francis)</div><div class="hood-price">$3M – $6M+</div>
+        <div class="hood-desc">The north Palo Alto umbrella area between Middlefield, Oregon Expressway, 101, and San Francisquito Creek. Contains several sub-districts: Duveneck/St. Francis (the largest and most prestigious, bordering Crescent Park), Triple El, Leland Manor, Embarcadero Oaks, and Garland. Traditionally the value path into north Palo Alto schools versus Old PA and Crescent Park.</div>
+        <div class="tier-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div>
+        <div class="insider">MLS area #238, often labeled Duveneck/St. Francis on portals: know both names. Duveneck Elementary is a headline draw (ranked among the very best in California), and this side of town feeds Paly, not Gunn. The name comes from Eichler's 1950 Green Gables Addition (63 homes, National Register), his early work before the South PA tracts. Fulton Street is "Christmas Tree Lane" every December.</div>
+      </div>
+      <div class="hood-card">
+        <div class="hood-name">Crescent Park</div><div class="hood-price">$4M – $12M+</div>
+        <div class="hood-desc">One of the most prestigious addresses in the city, rivaling Old Palo Alto. University Avenue runs through it, so its grand homes and expansive lots are literally the first impression of Palo Alto for visitors arriving from 101. Serene, tree-heavy, north of downtown near San Francisquito Creek.</div>
+        <div class="tier-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div></div>
+        <div class="insider">Crescent Park is famously home to high-profile tech founders who chose it over Old PA for the privacy of its deeper lots. It pairs with Community Center on many portals ("Crescent Park/Community Center"), and median prices here sit in the top fraction of a percent nationally. Feeds Duveneck Elementary and Paly.</div>
+      </div>
+      <div class="hood-card">
+        <div class="hood-name">Community Center</div><div class="hood-price">$3.5M – $8M</div>
+        <div class="hood-desc">Named for the civic cluster it wraps around: Rinconada Park and pool, the Lucie Stern Community Center, the Junior Museum &amp; Zoo, the Art Center, the Children's Theatre, and the main library. Arguably the most amenity-rich residential pocket in the city, between downtown and Green Gables.</div>
+        <div class="tier-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div></div>
+        <div class="insider">For families, this is the "everything within a stroller ride" pitch: park, pool, zoo, theater, and library in one loop. Walter Hays Elementary anchors the school story, feeding Paly. Portals often blend it with Crescent Park, so check comps under both labels.</div>
+      </div>
+      <div class="hood-card">
+        <div class="hood-name">Downtown Palo Alto</div><div class="hood-price">$1.5M – $5M</div>
+        <div class="hood-desc">The most urban living in the city: condos, townhomes, and vintage homes within blocks of University Avenue's restaurants, offices, and the downtown Caltrain hub. On the MLS this covers the Downtown North and University South pockets on either side of University Ave.</div>
+        <div class="tier-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div>
+        <div class="insider">This is where Palo Alto's condo market lives, which makes it the entry point for buyers who want the address without a $3M+ budget, and the downsizing destination for empty nesters leaving big Old PA and Crescent Park lots. Two distinct sub-markets: Downtown North (quieter, leafier) and University South (closer to Professorville, more prewar charm).</div>
+      </div>
+      <div class="hood-card">
+        <div class="hood-name">College Terrace</div><div class="hood-price">$2.2M – $4M</div>
+        <div class="hood-desc">A 12-block-by-2-block pocket wedged between Stanford and the California Avenue district, with streets named after universities and colleges. Older than Palo Alto itself: founded 1887, part of old Mayfield, annexed in 1925. Eclectic mix of cottages, bungalows, and rentals with a strong academic flavor.</div>
+        <div class="tier-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div><div class="dot"></div></div>
+        <div class="insider">Stanford actively buys homes here for faculty, a source of local consternation but also price support: a genuinely insider dynamic to know. It had Palo Alto's first residential parking permit program (Stanford spillover). Walkable to Cal Ave, Caltrain, and the Research Park employers. The adjacent Evergreen Park and Southgate pockets offer similar charm and Cal Ave walkability.</div>
+      </div>
+      <div class="hood-card">
+        <div class="hood-name">Ventura</div><div class="hood-price">$1.9M – $3M</div>
+        <div class="hood-desc">A small, eclectic neighborhood between El Camino and the Caltrain line, roughly Oregon Expressway to Page Mill. A mix of apartments, townhomes, and smaller single-family homes (many under 1,500 sqft) on smaller lots. Walkable to the California Avenue business district and its Caltrain station. The closest thing to an affordable entry into Palo Alto.</div>
+        <div class="tier-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div><div class="dot"></div></div>
+        <div class="insider">About three-quarters of Ventura residents are renters, highly unusual for Palo Alto. It's also widely seen as the Palo Alto neighborhood most likely to transform in the coming years given its stock of smaller older homes and redevelopment talk (locals know the former Fry's Electronics site conversation). Boulware Park is the anchor.</div>
+      </div>
+      <div class="hood-card">
+        <div class="hood-name">The Eichler Tracts (Greenmeadow, Fairmeadow, Charleston Meadows)</div><div class="hood-price">$3M – $5M</div>
+        <div class="hood-desc">South Palo Alto is the Eichler capital of the world: Joseph Eichler built 2,700+ homes in Palo Alto, more than any other city. Greenmeadow (1954, ~270 homes) is on the National Register of Historic Places. Fairmeadow, called "The Circles" for its concentric street layout, borders Mitchell Park. Charleston Meadows has some of the earliest tracts (1951). Palo Verde and Greer Park have solid Eichler stock too.</div>
+        <div class="tier-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div>
+        <div class="insider">Eichler buyers are a self-selecting tribe: they ask for tracts by name and expect you to know clerestory windows, post-and-beam, atriums, and glass rear walls. Know the trade-offs too (single-pane glass, radiant slab heating, flat roofs) and that Greenmeadow's historic status adds scrutiny to alterations, like Professorville.</div>
+      </div>
+      <div class="hood-card">
+        <div class="hood-name">Palo Alto Hills</div><div class="hood-price">$4M – $10M+</div>
+        <div class="hood-desc">The city's estate country: large lots in the southwestern foothills around the Palo Alto Hills Golf &amp; Country Club, bordering the Foothills Nature Preserve and Arastradero Preserve trails. Semi-rural, view-driven, and a completely different product from the flats: privacy and land instead of walkability.</div>
+        <div class="tier-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div></div>
+        <div class="insider">This is Palo Alto's answer to Los Altos Hills, with PAUSD schools as the differentiator (Gunn feed). Buyers here cross-shop Los Altos Hills and Portola Valley, so know that comparison: PA Hills trades a bit of lot size for the PAUSD label. Winding roads and fire-zone insurance questions come up: be ready for both.</div>
+      </div>
+    </div>
+    <div class="section-label">One thing to always know</div>
+    <div class="always-know">PAUSD (Palo Alto Unified) is the main school district and commands a massive premium. But watch for the edges: some South Palo Alto streets feed into <strong>Los Altos School District</strong> instead, which buyers in the know will test you on. Also know which high school a neighborhood feeds: south/west neighborhoods like Green Acres and Barron Park go to <strong>Gunn High</strong>, while north-central neighborhoods go to <strong>Palo Alto High (Paly)</strong>. Buyers often target one specifically. Verify district boundaries before you open your mouth about schools.</div>
+  </div>
+
+  <div id="city-atherton" class="city-panel">
+    <div class="city-header">
+      <div class="city-name">Atherton</div>
+      <div class="city-tagline">The wealthiest zip code in America: no downtown, no commercial, just estates</div>
+      <div class="city-meta">
+        <span class="meta-pill price-pill">$5M – $30M+</span>
+        <span class="meta-pill vibe-pill">Ultra-private, estate, old money</span>
+        <span class="meta-pill buyer-pill">Billionaires, tech founders, hedge fund, inherited wealth</span>
+      </div>
+    </div>
+    <div class="section-label">Key areas (Atherton has no official neighborhoods: it functions as one unified enclave)</div>
+    <div class="hoods-grid">
+      <div class="hood-card">
+        <div class="hood-name">West Atherton</div><div class="hood-price">$8M – $30M+</div>
+        <div class="hood-desc">The most private and prestigious section. Very large lots, gated driveways, extreme seclusion. Trophy properties and generational estates. The highest price tier in the city.</div>
+        <div class="tier-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div></div>
+        <div class="insider">Properties here rarely come to market publicly. Many trade off-market. If you're showing a buyer something in West Atherton, it's a serious transaction.</div>
+      </div>
+      <div class="hood-card">
+        <div class="hood-name">Central Atherton</div><div class="hood-price">$5M – $12M</div>
+        <div class="hood-desc">Still exceptional but slightly more accessible than the west side. Mix of original estates and newer construction. Atherton's "entry point," which means it starts at $5M.</div>
+        <div class="tier-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div>
+        <div class="insider">Buyers who say "I want Atherton" but have $5–6M are looking here. A good comp here can still clear $1,500/sqft. Knowing that number cold impresses clients.</div>
+      </div>
+      <div class="hood-card">
+        <div class="hood-name">Atherton / Menlo border</div><div class="hood-price">$4M – $8M</div>
+        <div class="hood-desc">The eastern edge blending into Menlo Park. Same school district access (Las Lomitas), slightly lower price than deep Atherton. Popular with buyers who want the feel without the top-tier price.</div>
+        <div class="tier-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div>
+        <div class="insider">Listings here sometimes market themselves as "Atherton-adjacent" or even just "Atherton" informally. Always verify the actual city boundary before presenting to a client.</div>
+      </div>
+      <div class="hood-card">
+        <div class="hood-name">Lindenwood</div><div class="hood-price">$5M – $15M</div>
+        <div class="hood-desc">A gated community within Atherton. HOA governs the road maintenance. Exceptionally private. One of the most recognized addresses even within Atherton.</div>
+        <div class="tier-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div></div>
+        <div class="insider">Lindenwood has private roads maintained by residents. Some buyers love the extra layer of privacy; others see HOA involvement as a negative. Know before you show.</div>
+      </div>
+    </div>
+    <div class="section-label">One thing to always know</div>
+    <div class="always-know">Atherton has no commercial zone: no cafes, no restaurants, no shops. It's entirely residential by design. The city's identity is built around privacy and exclusion. Buyers coming from urban environments sometimes don't realize this upfront. Mention it early so there are no surprises.</div>
+  </div>
+
+  <div id="city-redwoodcity" class="city-panel">
+    <div class="city-header">
+      <div class="city-name">Redwood City</div>
+      <div class="city-tagline">The most accessible and diverse entry point into Peninsula real estate</div>
+      <div class="city-meta">
+        <span class="meta-pill price-pill">$1.4M – $4M+</span>
+        <span class="meta-pill vibe-pill">Energetic, diverse, up-and-coming</span>
+        <span class="meta-pill buyer-pill">First-time Peninsula buyers, young families, investors</span>
+      </div>
+    </div>
+    <div class="section-label">Key neighborhoods</div>
+    <div class="hoods-grid">
+      <div class="hood-card">
+        <div class="hood-name">Farm Hill / Emerald Hills</div><div class="hood-price">$2M – $4M</div>
+        <div class="hood-desc">Elevated hillside neighborhoods with views, larger lots, and a quieter suburban feel. More space for the money than flat Redwood City. Popular with buyers wanting privacy without Atherton prices.</div>
+        <div class="tier-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div>
+        <div class="insider">Emerald Hills has winding roads and a rural feel despite being minutes from 280. Buyers who discover it often say it doesn't feel like what they expected from "Redwood City."</div>
+      </div>
+      <div class="hood-card">
+        <div class="hood-name">Mount Carmel</div><div class="hood-price">$1.6M – $2.8M</div>
+        <div class="hood-desc">Central, walkable, close to downtown and Caltrain. A mix of older craftsman and post-war homes. Strong rental demand. Good entry-level for Peninsula buyers.</div>
+        <div class="tier-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div><div class="dot"></div></div>
+        <div class="insider">Downtown Redwood City has transformed significantly in the past decade: more restaurants, nightlife, and office workers. Mount Carmel buyers benefit from that without paying downtown premiums.</div>
+      </div>
+      <div class="hood-card">
+        <div class="hood-name">Redwood Shores</div><div class="hood-price">$1.4M – $2.5M</div>
+        <div class="hood-desc">A planned waterfront community on the bay. Condos, townhomes, and single-family homes. More affordable, very popular with commuters to Oracle HQ (located there) and other bay-side tech campuses.</div>
+        <div class="tier-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+        <div class="insider">Redwood Shores has a lagoon system: some homes are waterfront and command a premium. Those listings sell fast. It's technically in Redwood City but feels like its own world.</div>
+      </div>
+      <div class="hood-card">
+        <div class="hood-name">Kentfield Commons / Roy Cloud area</div><div class="hood-price">$2.2M – $3.5M</div>
+        <div class="hood-desc">Gated community feel, very family-oriented, near the Atherton border. Roy Cloud elementary is a draw. Quieter and more suburban than central Redwood City.</div>
+        <div class="tier-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div>
+        <div class="insider">The Atherton adjacency here, similar to West Menlo, adds a psychological premium that shows up in prices. Buyers feel like they're in that world without paying Atherton prices.</div>
+      </div>
+    </div>
+    <div class="section-label">One thing to always know</div>
+    <div class="always-know">Redwood City feeds into <strong>Sequoia Union High School District</strong> for high school (Woodside High and Sequoia High), but elementary varies by neighborhood. Roy Cloud, Hoover, and Kennedy are the names that come up. Woodside High has a strong reputation: knowing that helps you redirect school conversations away from weaker elementary ratings.</div>
+  </div>
+
+  <div id="city-sancarlos" class="city-panel">
+    <div class="city-header">
+      <div class="city-name">San Carlos</div>
+      <div class="city-tagline">"The City of Good Living": the Peninsula's most beloved family town</div>
+      <div class="city-meta">
+        <span class="meta-pill price-pill">$1.5M – $3.5M</span>
+        <span class="meta-pill vibe-pill">Charming, walkable, tight-knit</span>
+        <span class="meta-pill buyer-pill">Young families, move-up buyers, community-oriented</span>
+      </div>
+    </div>
+    <div class="section-label">Key neighborhoods</div>
+    <div class="hoods-grid">
+      <div class="hood-card">
+        <div class="hood-name">White Oaks</div><div class="hood-price">$2.2M – $3.5M</div>
+        <div class="hood-desc">The most desirable neighborhood in San Carlos. Tree-lined streets, larger lots, pride-of-ownership homes. Short walk to Laurel Street. The address families work toward in San Carlos.</div>
+        <div class="tier-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div></div>
+        <div class="insider">Homes in White Oaks often sell with multiple offers regardless of market conditions. If your buyer wants San Carlos and has the budget, start here: it holds value exceptionally well.</div>
+      </div>
+      <div class="hood-card">
+        <div class="hood-name">Brittan Acres</div><div class="hood-price">$1.8M – $2.8M</div>
+        <div class="hood-desc">Flat, grid-pattern streets west of El Camino. Very family-friendly, close to Burton Park. One of the most kid-friendly pockets in the city, with a high density of young families.</div>
+        <div class="tier-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div>
+        <div class="insider">Burton Park is the center of community life here: Saturday little league, picnics, community events. Mentioning it tells buyers you know what daily life actually looks like in this neighborhood.</div>
+      </div>
+      <div class="hood-card">
+        <div class="hood-name">Howard Park</div><div class="hood-price">$1.6M – $2.5M</div>
+        <div class="hood-desc">East of El Camino, closer to the bay. More modest and affordable entry into San Carlos. Mix of older ranch homes and some newer builds. Good for buyers stretching into the market.</div>
+        <div class="tier-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+        <div class="insider">East of El Camino generally means lower prices anywhere on the Peninsula. That's a rule of thumb worth internalizing: it applies to San Carlos, Menlo Park, and Redwood City alike.</div>
+      </div>
+      <div class="hood-card">
+        <div class="hood-name">Central San Carlos / Laurel St area</div><div class="hood-price">$1.7M – $3M</div>
+        <div class="hood-desc">Walking distance to Laurel Street's restaurants, shops, and coffee. The "downtown adjacent" pocket. Buyers who want urban walkability without going to Redwood City choose this.</div>
+        <div class="tier-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div>
+        <div class="insider">Laurel Street is a legitimate dining destination, not just a strip mall. San Carlos residents take pride in it. Knowing a few restaurant names (like The Refuge for beer and sandwiches) signals real local knowledge.</div>
+      </div>
+    </div>
+    <div class="section-label">One thing to always know</div>
+    <div class="always-know">San Carlos Elementary SD covers K–8. High school goes to <strong>Carlmont High School</strong> via Sequoia Union HSD. Carlmont is physically located in Belmont (not San Carlos): knowing that geography prevents confusion when buyers look it up on a map and wonder why the high school address doesn't match the city.</div>
+  </div>
+
+  <div id="city-belmont" class="city-panel">
+    <div class="city-header">
+      <div class="city-name">Belmont</div>
+      <div class="city-tagline">Underrated hillside city: Carlmont High's actual home and a quiet value play</div>
+      <div class="city-meta">
+        <span class="meta-pill price-pill">$1.3M – $2.8M</span>
+        <span class="meta-pill vibe-pill">Quiet, hillside, residential</span>
+        <span class="meta-pill buyer-pill">Practical buyers, value seekers, families wanting space</span>
+      </div>
+    </div>
+    <div class="section-label">Key neighborhoods</div>
+    <div class="hoods-grid">
+      <div class="hood-card">
+        <div class="hood-name">Belmont Hills</div><div class="hood-price">$1.8M – $2.8M+</div>
+        <div class="hood-desc">The premium pocket. Elevated, with bay views and canyon views. Larger lots. More dramatic landscape than flat Peninsula neighborhoods. The place buyers end up when they discover Belmont.</div>
+        <div class="tier-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div>
+        <div class="insider">Views from Belmont Hills on a clear day include the Bay, the Dumbarton Bridge, and on exceptional days the East Bay hills. Always check the weather before showing hillside homes here.</div>
+      </div>
+      <div class="hood-card">
+        <div class="hood-name">Old Belmont / Central</div><div class="hood-price">$1.3M – $2.2M</div>
+        <div class="hood-desc">Flat to gently rolling. Older neighborhood stock, quiet streets. The most affordable and accessible part of Belmont. Good for buyers who want a single-family home without a steep driveway.</div>
+        <div class="tier-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+        <div class="insider">Many buyers discover Belmont after being outbid in San Carlos repeatedly. The pitch: same Carlmont High, same Sequoia Union HSD, $200–300K less. That's a compelling value case to make.</div>
+      </div>
+      <div class="hood-card">
+        <div class="hood-name">Belmont Village</div><div class="hood-price">$1.4M – $2M</div>
+        <div class="hood-desc">Near Belmont's small downtown strip. Walkable to the Caltrain station, which is a draw for SF commuters. More urban density, smaller lots, but convenient location.</div>
+        <div class="tier-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div><div class="dot"></div></div>
+        <div class="insider">Caltrain access here is underrated for SF commuters who can't afford to live in the city. The commute is clean: 35–40 min to SF by express. Lean into this with that buyer profile.</div>
+      </div>
+      <div class="hood-card">
+        <div class="hood-name">Rancho Cielo / Carlmont area</div><div class="hood-price">$1.5M – $2.5M</div>
+        <div class="hood-desc">Near Carlmont High School itself. Family-oriented, convenient to Caltrain and 101. Comfortable suburban pocket that benefits from the high school's proximity and reputation.</div>
+        <div class="tier-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div><div class="dot"></div></div>
+        <div class="insider">Buyers with high schoolers specifically seek walkability to Carlmont. Mentioning which streets are within walking distance is a detail that earns trust with that buyer type.</div>
+      </div>
+    </div>
+    <div class="section-label">One thing to always know</div>
+    <div class="always-know">Belmont's elementary and middle school falls under <strong>Belmont-Redwood Shores SD</strong> (K–8). This is the same district that covers Redwood Shores: buyers sometimes get confused when they see the district name and think Redwood Shores, not Belmont. High school is Carlmont via Sequoia Union HSD.</div>
+  </div>
+
+  <div id="city-losaltos" class="city-panel">
+    <div class="city-header">
+      <div class="city-name">Los Altos</div>
+      <div class="city-tagline">Village charm, orchard heritage, and estate country up the hill</div>
+      <div class="city-meta">
+        <span class="meta-pill price-pill">$2.5M – $15M+</span>
+        <span class="meta-pill vibe-pill">Quiet, leafy, understated wealth</span>
+        <span class="meta-pill buyer-pill">Tech execs, families trading up, privacy seekers</span>
+      </div>
+    </div>
+    <div class="section-label">Key neighborhoods</div>
+    <div class="hoods-grid">
+      <div class="hood-card">
+        <div class="hood-name">North Los Altos</div><div class="hood-price">$3.5M – $9M+</div>
+        <div class="hood-desc">The market leader and the first part of town developed. Contains Old Los Altos, which has an Old Palo Alto feel: mature tree canopy, estates on University Avenue (some over 100 years old), and true walkability to downtown. Most homes sit on 5,000–7,000 sqft lots off the big University Ave parcels.</div>
+        <div class="tier-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div></div>
+        <div class="insider">Locals call downtown "the Village," and walk-to-Village is the single biggest premium driver in Los Altos. North Los Altos posted the city's highest average price and claimed both the highest and lowest sales of 2024, the low being an SB9 developer play.</div>
+      </div>
+      <div class="hood-card">
+        <div class="hood-name">Country Club</div><div class="hood-price">$2.5M – $9M</div>
+        <div class="hood-desc">Perched along the foothills by the San Antonio Open Space Preserve, named for the member-owned Los Altos Golf &amp; Country Club. Spacious lots, generally a quarter to a full acre, with views of the club's rolling hills. Eclectic mix of home styles and sizes.</div>
+        <div class="tier-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div>
+        <div class="insider">Despite the Los Altos address, Country Club is unincorporated Santa Clara County: county building standards are more liberal, so you can build bigger and faster than in the city proper. Developers know this and actively target the area. Same pattern as University Heights in Menlo Park. Bonus history: the land was originally bought by Santa Clara University for a second campus before the 1906 earthquake killed the plan.</div>
+      </div>
+      <div class="hood-card">
+        <div class="hood-name">Highlands</div><div class="hood-price">$3M – $7.5M</div>
+        <div class="hood-desc">The south-side area toward the Cupertino border. Larger, quieter, more suburban in feel, further from the Village. Recorded the city's lowest average price and longest days on market in 2024, which makes it the relative value play within Los Altos.</div>
+        <div class="tier-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div>
+        <div class="insider">The critical detail: the Highlands feeds Cupertino schools (Cupertino Union / Fremont Union HSD, including Homestead High), not Los Altos schools. Homes feeding MVLA (Mountain View-Los Altos High) generally sell for more than Cupertino-feeding homes. Know which side of that line a listing is on before quoting schools.</div>
+      </div>
+      <div class="hood-card">
+        <div class="hood-name">South of El Monte</div><div class="hood-price">$2M – $7M</div>
+        <div class="hood-desc">The area south of El Monte Avenue, spanning a wide price range from entry-level Los Altos to substantial rebuilds. Includes pockets like Loyola Corners, the small foothill-adjacent commercial node locals treat as their neighborhood hub. Quieter and more residential than the north side.</div>
+        <div class="tier-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div><div class="dot"></div></div>
+        <div class="insider">2024 sales here ranged from about $2.1M to $7M, one of the widest spreads in the city. That spread is your opportunity: buyers priced out of North Los Altos can still get Los Altos schools here, if you verify the district boundary street by street.</div>
+      </div>
+      <div class="hood-card">
+        <div class="hood-name">Los Altos Hills</div><div class="hood-price">$4M – $15M+</div>
+        <div class="hood-desc">Technically its own incorporated town, not a Los Altos neighborhood. Estate country: one-acre minimum lots, no commercial zone at all (like Atherton), no sidewalks, and sweeping bay or hill views. The South Bay's answer to Atherton, with a more rural, equestrian character.</div>
+        <div class="tier-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div></div>
+        <div class="insider">Like Atherton, there are no shops or restaurants in town, and privacy is the product. Buyers comparing the two: Atherton is flat, gated, old-money; Los Altos Hills is hilly, view-driven, and reads more "quietly earned tech wealth." School assignments vary by parcel (LASD, PAUSD edges, and Bullis Charter conversations come up), so verify per address.</div>
+      </div>
+    </div>
+    <div class="section-label">One thing to always know</div>
+    <div class="always-know">Los Altos pricing runs on two questions: <strong>which school district</strong> and <strong>can you walk to the Village</strong>. The city is split between Los Altos schools (LASD feeding MVLA High) and Cupertino schools (CUSD feeding Homestead): the Highlands and parts of South Los Altos west of Fremont Ave are on the Cupertino side, and MVLA-feeding homes generally command more. Los Altos Hills is a separate town entirely. Also useful: the four Los Altos MLS areas are North Los Altos, Country Club, Highlands, and South of El Monte, so searches and comps are organized around exactly these names.</div>
+  </div>
+</div>
+
+<div id="quiz" class="section">
+  <div class="score-bar">
+    <span style="font-size:13px">Score:</span>
+    <span class="score-num" id="score-display">0 / 0</span>
+    <button class="restart-btn" onclick="restartQuiz()">Restart</button>
+  </div>
+  <div id="quiz-container"></div>
+</div>
+
+<div class="foot">Peninsula Neighborhood Crash Course &middot; Moe Nasser, Compass &middot; DRE# 02231168 &middot; Price ranges are approximate and for study purposes; always verify on the MLS.</div>
+</div>
+
+<script>
+const CITIES=['menlopark','paloalto','atherton','redwoodcity','sancarlos','belmont','losaltos'];
+function showTab(id){
+  document.querySelectorAll('.tab').forEach((t,i)=>{t.classList.toggle('active',['overview','neighborhoods','quiz'][i]===id)});
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function showCity(id){
+  document.querySelectorAll('.city-tab').forEach((t,i)=>t.classList.toggle('active',CITIES[i]===id));
+  document.querySelectorAll('.city-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('city-'+id).classList.add('active');
+}
+function jumpTo(id){showTab('neighborhoods');showCity(id);}
+
+const QUESTIONS=[
+  {q:"You're showing a buyer a home in West Menlo Park, west of El Camino. What school district does it likely fall in?",opts:["MPCSD (Menlo Park City School District)","Las Lomitas ESD","PAUSD","Sequoia Union HSD"],ans:1,exp:"West Menlo Park west of El Camino is Las Lomitas territory: one of the most prestigious elementary districts on the Peninsula and a massive price driver. East of El Camino is typically MPCSD."},
+  {q:"University Heights in Menlo Park has one unusual characteristic that affects buyers who want to build. What is it?",opts:["It's a historic district with strict design review","It's unincorporated San Mateo County with less restrictive building rules","It has no public school access","It's a gated community with an HOA"],ans:1,exp:"University Heights is unincorporated San Mateo County rather than City of Menlo Park, so building and remodeling regulations are generally less restrictive. It still feeds the top Las Lomitas / La Entrada schools, which drives its premium."},
+  {q:"A buyer says they want Atherton but only has $4.5M. What's your honest response?",opts:["Tell them to keep looking, nothing exists at that price","Show them the Atherton/Menlo border area and frame it as Atherton-adjacent","Show them central Atherton, it starts around $5M","Redirect to Menlo Park instead without mentioning Atherton"],ans:1,exp:"The Atherton/Menlo border area offers the same Las Lomitas schools and proximity at lower prices. Being transparent about the value trade-off, rather than just shutting them down, builds trust."},
+  {q:"Which neighborhood is known as the most prestigious and highest-priced pocket in Palo Alto?",opts:["Midtown","Barron Park","Professorville","Old Palo Alto"],ans:3,exp:"Old Palo Alto is the benchmark. Estate-scale homes, large lots, walkable to University Ave. When a buyer says they want the best of Palo Alto, this is the answer, if they have $5M+."},
+  {q:"A client asks about Carlmont High School. They assume it's in San Carlos since that's where they're looking. What do you tell them?",opts:["It is in San Carlos, near downtown","It's actually located in Belmont, but it serves both San Carlos and Belmont students via Sequoia Union HSD","It's in Redwood City near the border","It's a private school on the San Carlos/Belmont border"],ans:1,exp:"Carlmont is physically in Belmont: knowing this prevents an awkward moment when a buyer looks it up on a map. Both San Carlos (via San Carlos ESD) and Belmont (via Belmont-Redwood Shores SD) feed into it through Sequoia Union HSD."},
+  {q:"What is the key difference between Atherton and every other city on the Peninsula?",opts:["It has the highest price-per-sqft","It is entirely residential, no commercial zone, no restaurants, no shops","It's the only city with gated communities","It has its own school district"],ans:1,exp:"Atherton has no commercial zone by design. Buyers from urban backgrounds sometimes don't realize this: there's nowhere to grab coffee or dinner within the city limits. Mention it early to avoid surprises."},
+  {q:"A Belmont buyer is concerned the schools aren't as good as San Carlos. What's your most compelling response?",opts:["Agree and suggest they stretch their budget for San Carlos","Point out that both cities feed into Carlmont High via Sequoia Union HSD, and Belmont prices are $200–300K less for the same high school","Say schools are comparable everywhere on the Peninsula","Suggest they look at private schools instead"],ans:1,exp:"Same high school (Carlmont), same district (Sequoia Union), lower price. That's a strong value case that many buyers haven't considered, especially ones being outbid repeatedly in San Carlos."},
+  {q:"Which area is often called the entry point into Peninsula real estate with the most diverse price range?",opts:["Belmont","Palo Alto","Redwood City","San Carlos"],ans:2,exp:"Redwood City ranges from $1.4M (Redwood Shores condos) up to $4M+ (Emerald Hills, hillside estates). That spread makes it the most accessible and diverse market for Peninsula buyers at different budget levels."},
+  {q:"The Barron Park neighborhood in Palo Alto is known for something unusual that signals local knowledge. What is it?",opts:["A historic railroad that still runs through it","A herd of donkeys at a local stable","A UNESCO-listed Victorian streetscape","A private lake shared by residents"],ans:1,exp:"Barron Park has a famous herd of donkeys at a local stable. Locals know and love them: mentioning it is a subtle but effective signal that you know the area beyond what a quick Zillow search would tell you."},
+  {q:"Which two east-side Menlo Park neighborhoods are in MPCSD rather than Las Lomitas?",opts:["Allied Arts and West Menlo","University Heights and Sharon Heights","The Willows and Vintage Oaks","Lindenwood and Central Atherton"],ans:2,exp:"The Willows and Vintage Oaks both sit on the east side and feed MPCSD schools (Laurel/Encinal Elementary, Hillview Middle), not Las Lomitas. This is the same east-of-El-Camino pattern that drives the price difference across Menlo Park."},
+  {q:"Stanford Weekend Acres is easy to overlook on the MLS for what reason?",opts:["It only ever sells off-market","It's listed under the alias 'Alpine Road' on the MLS","It has no formal street addresses","It's technically part of Palo Alto"],ans:1,exp:"Stanford Weekend Acres usually appears as 'Alpine Road' on the MLS. It's a tiny unincorporated pocket of seven looping streets by the Stanford Dish, feeding top Las Lomitas / La Entrada schools. Knowing the alias means you won't miss listings there."},
+  {q:"Linfield Oaks in central Menlo Park is anchored by which park, and appears under what MLS alias?",opts:["Sharon Park; listed as 'Sharon Heights'","Burgess Park; listed as 'Middlefield to El Camino'","Bedwell Bayfront Park; listed as 'Bayfront'","Nealon Park; listed as 'Downtown Menlo'"],ans:1,exp:"Linfield Oaks wraps around Burgess Park (pools, courts, fields, skatepark, library) and shows on the MLS as 'Middlefield to El Camino.' It's a central MPCSD neighborhood (Encinal/Hillview) with pedestrian bridges into downtown Palo Alto."},
+  {q:"A buyer asks about Green Acres in Palo Alto. Which of these is TRUE?",opts:["It's in north Palo Alto near downtown","It feeds Palo Alto High (Paly)","It offers walkable access to Juana Briones Elementary, Fletcher Middle, and Gunn High","It's the same neighborhood as Green Gables"],ans:2,exp:"Green Acres sits on Palo Alto's southwestern edge by Los Altos, and its signature draw is pedestrian access to a full top-ranked school ladder ending at Gunn High. Green Gables is a completely different neighborhood in north Palo Alto: mixing them up is a classic outsider tell."},
+  {q:"An Eichler enthusiast wants the historic, best-preserved tract in South Palo Alto. Where do you point them, and what nickname does the neighboring circular-street tract go by?",opts:["Charleston Meadows; 'The Loops'","Greenmeadow; Fairmeadow is 'The Circles'","Palo Verde; Greer Park is 'The Rings'","Barron Park; Green Acres is 'The Curves'"],ans:1,exp:"Greenmeadow (1954, ~270 Eichlers) is on the National Register of Historic Places and is the benchmark tract. Neighboring Fairmeadow is known locally as 'The Circles' for its concentric street layout. Palo Alto has 2,700+ Eichlers, more than any other city."},
+  {q:"What makes Ventura stand out among Palo Alto neighborhoods?",opts:["It has the largest average lot sizes in the city","It's majority renters and the most accessible entry price into Palo Alto","It's the only neighborhood zoned to Los Altos schools","It has the highest concentration of Eichlers"],ans:1,exp:"Roughly three-quarters of Ventura residents rent, highly unusual for Palo Alto, and its smaller older homes make it the city's most accessible price point. It's walkable to California Ave and Caltrain, and is widely seen as the Palo Alto neighborhood most likely to transform through redevelopment."},
+  {q:"A buyer mentions Green Gables in Palo Alto. Which statement shows you actually know the area?",opts:["It's a single small subdivision in south Palo Alto feeding Gunn High","It's a north PA umbrella area (often labeled Duveneck/St. Francis on the MLS) whose sub-districts feed Duveneck Elementary and Paly","It's a gated community bordering Los Altos","It's Palo Alto's newest master-planned development"],ans:1,exp:"Green Gables is the north Palo Alto umbrella for Duveneck/St. Francis, Triple El, Leland Manor, Embarcadero Oaks, and Garland (MLS #238). Duveneck Elementary is a top-of-state draw and the area feeds Paly, not Gunn. The name traces to Eichler's 1950 Green Gables Addition, now on the National Register."},
+  {q:"What two questions drive pricing in Los Altos more than anything else?",opts:["Lot size and year built","Which school district, and can you walk to the Village","Freeway access and view quality","HOA status and solar readiness"],ans:1,exp:"Los Altos is split between Los Altos schools (LASD feeding MVLA High) and Cupertino schools (CUSD feeding Homestead): the Highlands and parts of South Los Altos are on the Cupertino side, and MVLA-feeding homes generally sell for more. Walk-to-Village is the other premium driver, which is why North Los Altos leads the market."},
+  {q:"The Country Club neighborhood of Los Altos shares an unusual trait with University Heights in Menlo Park. What is it?",opts:["Both are gated communities","Both are unincorporated county pockets with more liberal building standards","Both were built by Joseph Eichler","Both feed Cupertino schools"],ans:1,exp:"Country Club has a Los Altos address but sits in unincorporated Santa Clara County, so county building rules apply: you can build bigger and faster than in the city proper, and developers actively target it. University Heights is the same pattern in San Mateo County. Recognizing unincorporated pockets is a genuine expert signal."},
+  {q:"A buyer is considering Belle Haven for its price point near Meta HQ. What's the school situation you need to explain?",opts:["It's in MPCSD like the rest of Menlo Park","It's K-8 Ravenswood City SD, but still feeds Menlo-Atherton High like the rest of the city","It has no assigned public schools","It feeds Palo Alto schools across the creek"],ans:1,exp:"Belle Haven, the only Menlo Park neighborhood east of 101, is served by Ravenswood City SD for K-8, a major pricing factor, while high schoolers still attend Menlo-Atherton. Buyers there typically trade school ratings for affordability, upside, and proximity to east-side employers and the Willow Village redevelopment."},
+  {q:"How many unincorporated county pockets does Menlo Park have, and why does it matter?",opts:["One: Sharon Heights, which has its own police force","Two: Belle Haven and North Fair Oaks, which pay lower taxes","Three: University Heights, Stanford Weekend Acres, and Menlo Oaks, where county building rules are looser","None: all of Menlo Park is incorporated"],ans:2,exp:"University Heights, Stanford Weekend Acres, and Menlo Oaks all carry Menlo Park addresses but sit in unincorporated San Mateo County, where building and remodeling standards are more liberal. That's a real draw for buyers who want to build, and knowing all three pockets is an expert-level detail. (North Fair Oaks is also unincorporated but is its own community with Redwood City schools.)"},
+  {q:"What dynamic uniquely supports home prices in Palo Alto's College Terrace?",opts:["A city subsidy program for teachers","Stanford actively buys homes there for faculty housing","It's exempt from property taxes","Its HOA restricts sales to Stanford alumni"],ans:1,exp:"Stanford's practice of purchasing College Terrace homes for faculty is a source of local consternation but real price support. The 12-block pocket predates Palo Alto itself (1887, part of old Mayfield), had the city's first residential parking permit program, and offers walkability to Cal Ave, Caltrain, and Research Park employers."},
+  {q:"A buyer wants the Atherton feel (privacy, large lots, prestige) but has a $6M budget. Which neighborhood is the best fit?",opts:["Old Palo Alto","West Atherton","West Menlo Park","Lindenwood"],ans:2,exp:"West Menlo Park is often described as 'Atherton-adjacent': Las Lomitas schools, larger lots, and a similar feel at a lower price point. At $6M you're well-positioned there, whereas $6M barely gets you into Central Atherton."},
+  {q:"East of El Camino Real generally means what in Peninsula real estate?",opts:["Better school districts","Higher prices due to walkability","Lower prices compared to west of El Camino","More new construction"],ans:2,exp:"East of El Camino is a consistent rule of thumb: lower prices, more modest lot sizes, and often weaker school districts. It applies across Menlo Park, San Carlos, and Redwood City. Internalizing this helps you read a listing's price instantly."},
+  {q:"Which neighborhood in Redwood City would you pitch to a buyer who wants a planned waterfront community near tech campuses?",opts:["Farm Hill / Emerald Hills","Mount Carmel","Redwood Shores","Kentfield Commons"],ans:2,exp:"Redwood Shores is a planned waterfront community on the bay with a lagoon system, popular with commuters to Oracle HQ and other bay-side tech campuses. Some homes are waterfront and command a premium."}
+];
+
+let score=0,answered=[];
+function renderQuiz(){
+  const c=document.getElementById('quiz-container');
+  if(!c)return;
+  c.innerHTML='';
+  QUESTIONS.forEach((q,i)=>{
+    const div=document.createElement('div');
+    div.className='quiz-q';
+    const state=answered[i];
+    div.innerHTML='<div class="quiz-text"><span class="qnum">Question '+(i+1)+' of '+QUESTIONS.length+'</span>'+q.q+'</div><div class="quiz-opts">'+q.opts.map((o,j)=>{
+      let cls='quiz-opt';
+      if(state!==undefined){cls+=' disabled';if(j===q.ans)cls+=' correct';else if(j===state)cls+=' wrong';}
+      return '<button class="'+cls+'" onclick="answer('+i+','+j+')">'+o+'</button>';
+    }).join('')+'</div><div class="quiz-exp" id="exp-'+i+'">'+q.exp+'</div>';
+    if(state!==undefined)div.querySelector('#exp-'+i).style.display='block';
+    c.appendChild(div);
+  });
+  updateScore();
+}
+function answer(qi,oi){
+  if(answered[qi]!==undefined)return;
+  answered[qi]=oi;
+  if(oi===QUESTIONS[qi].ans)score++;
+  renderQuiz();
+}
+function updateScore(){
+  const done=answered.filter(a=>a!==undefined).length;
+  document.getElementById('score-display').textContent=score+' / '+done;
+}
+function restartQuiz(){answered=[];score=0;renderQuiz();window.scrollTo({top:0,behavior:'smooth'});}
+renderQuiz();
+</script>
+</body>
+</html>
